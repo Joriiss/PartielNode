@@ -1,9 +1,10 @@
-const express = require("express");
-const fs = require("fs");
-const { createConnection } = require("typeorm");
-const fileUpload = require("express-fileupload");
+const express = require("express")
+const fs = require("fs")
+const { createConnection } = require("typeorm")
+const {getConnection} = require("typeorm")
+const fileUpload = require("express-fileupload")
 
-const page = fs.readFileSync("index.html");
+const page = fs.readFileSync("index.html")
 const app = express();
 const port = 3000;
 app.use(
@@ -26,10 +27,6 @@ const connect = async () => {
         entities: [__dirname + "/entity/*{.js,.ts}"],
         synchronize: true
       });
-      connection.query("SELECT * FROM souvenir", function (error, results, fields) {
-        if (error) throw error;
-        console.log(results);
-      });
     } catch (e) {
       console.log(e);
     }
@@ -47,9 +44,15 @@ app.post("/upload", async (req, res) => {
 
     req.files.photo.mv(`./pictures/${req.files.photo.name}`, (err) => {
       if (err) return res.status(500).send(err);
-      res.send("File uploaded");
     });
   
+    const connectionUpload = getConnection("dbconnection1");
+    connectionUpload.query(
+      `INSERT INTO souvenir (id, titre, description, nomPhoto) VALUES (NULL, "${titre}", "${description}", "${req.files.photo.name}");`,
+      function (error, results, fields) {
+        if (error) throw error;
+      }
+    );
 });
 
   
