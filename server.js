@@ -3,8 +3,13 @@ const fs = require("fs")
 const { createConnection } = require("typeorm")
 const {getConnection} = require("typeorm")
 const fileUpload = require("express-fileupload")
+const mustacheExpress = require("mustache-express");
+const path = require("path")
+const { send } = require('express/lib/response');
+const serve   = require('express-static');
 
-const page = fs.readFileSync("index.html")
+
+const page = fs.readFileSync("views/index.mustache")
 const app = express();
 const port = 3000;
 app.use(
@@ -13,7 +18,13 @@ app.use(
       useTempFiles: true,
       tempFileDir: "/tmp/",
     })
-  );
+);
+app.engine("mustache", mustacheExpress());
+app.set("view engine", "mustache");
+app.set('views', __dirname + '/views');
+app.use(express.static(path.join(__dirname)));
+
+
 const connect = async () => {
     try {
       const connection = await createConnection({
@@ -51,6 +62,20 @@ app.post("/upload", async (req, res) => {
       `INSERT INTO souvenir (id, titre, description, nomPhoto) VALUES (NULL, "${titre}", "${description}", "${req.files.photo.name}");`,
       function (error, results, fields) {
         if (error) throw error;
+      }
+    );
+    const connectionInsert = getConnection("dbconnection1");
+    connectionInsert.query(
+      `SELECT * from souvenir`,
+      function (error, results, fields) {
+        if (error) throw error;
+        listeSouvenirs = []
+        for (let i = 0; i < results.length; i++) {
+          listeSouvenirs.push({titre : results[i]["titre"], description : results[i]["description"], nomPhoto : results[i]["nomPhoto"]})
+        }
+        return res.render("index", {
+          souvenirs: listeSouvenirs
+        });
       }
     );
 });
