@@ -46,8 +46,20 @@ connect()
 
 
 app.get("/upload", (req, res) => {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(page, "binary");
+  const connectionInsert = getConnection("dbconnection1");
+  connectionInsert.query(
+    `SELECT * from souvenir`,
+    function (error, results, fields) {
+      if (error) throw error;
+      listeSouvenirs = []
+      for (let i = 0; i < results.length; i++) {
+        listeSouvenirs.push({titre : results[i]["titre"], description : results[i]["description"], nomPhoto : results[i]["nomPhoto"]})
+      }
+      return res.render("index", {
+        souvenirs: listeSouvenirs
+      });
+    }
+  );
 });
 app.post("/upload", async (req, res) => {
     const titre = req.body.titre;

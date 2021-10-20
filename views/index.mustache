@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <title>Formulaire souvenir</title>
+    <title>Souvenir</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -9,22 +9,28 @@
   <body>
     <div class="container">
         <form method="post" enctype="multipart/form-data">
-            <label for="profil">Photo de profil : </label>
-            <input type="file" id="photo" name="photo" accept="image/png, image/jpeg"><br><br>
+            <label for="profil">Photo de vacance : </label>
+            <input type="file" id="photo" name="photo"  class="form-control" accept="image/png, image/jpeg"><br>
 
-            <label for="titre">Titre :</label>
-            <input type="text" name="titre" id="titre" class="form-control"> <br>
+            <input type="text" name="titre" id="titre" class="form-control" placeholder="titre"> <br>
 
-            <label for="description">Description :</label>
-            <textarea id="description" name="description"></textarea><br>
-
-            <button type="submit" class="btn btn-danger">Envoyer</button>
+            <textarea id="description" name="description" class="form-control" placeholder="Description de la photo"></textarea><br>
+            <p style="text-align:center">
+              <button type="submit" class="btn btn-danger">Envoyer</button>
+            </p>
         </form>
     </div>
+
+    <hr>
+    <h3>Album photo</h1>
     {{#souvenirs}}
-      <h3>{{titre}}</h3>
-      <img src="./pictures/{{nomPhoto}}" width="100px">
-      <p>{{description}}</p>
+      <div class="card" style="width: 18rem; display:inline-block">
+      <img src="./pictures/{{nomPhoto}}" class="card-img-top">
+      <div class="card-body">
+          <h5 class="card-title">{{titre}}</h5>
+          <p class="card-text">{{description}}</p>
+        </div>
+      </div>
     {{/souvenirs}}
 
 
